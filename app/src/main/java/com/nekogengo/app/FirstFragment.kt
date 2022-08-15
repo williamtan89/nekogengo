@@ -1,12 +1,11 @@
 package com.nekogengo.app
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.nekogengo.app.databinding.FragmentFirstBinding
 import com.nekogengo.repository.GitDbRepository
 import kotlinx.coroutines.launch
@@ -39,12 +38,13 @@ class FirstFragment : Fragment() {
         binding.tvContent.text = "hello world"
 
         lifecycleScope.launch {
-            gitDbRepository.getTestJson()
-                .runCatching {
-                    binding.tvContent.text = get("test_ok") ?: "not found, meow!"
-                }.onFailure {
-                    binding.tvContent.text = "failed!"
-                }
+            runCatching {
+                gitDbRepository.getTestJson()
+            }.onSuccess { json ->
+                binding.tvContent.text = json["test_ok"] ?: "not found, meow!"
+            }.onFailure {
+                binding.tvContent.text = "failed!"
+            }
         }
     }
 
